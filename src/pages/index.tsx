@@ -1,2 +1,2 @@
-export { FirstPage } from './FirstPage';
+export { MainPage } from './MainPage/MainPage';
 export { SecondPage } from './SecondPage';

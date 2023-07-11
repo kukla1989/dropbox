@@ -1,8 +1,8 @@
 import React from 'react';
 import { shallow } from 'enzyme';
-import { FirstPage } from '..';
+import { MainPage } from '..';
 
-const pageComponent = shallow(<FirstPage title="Teste page" />);
+const pageComponent = shallow(<MainPage title="Teste page" />);
 
 describe('Check mout page Default', () => {
   it('return componet with props title', () => {
