@@ -1,17 +1,15 @@
 import React, { FC } from 'react';
-import { FilesTable } from '../../Components/FilesTable/FilesTable';
+import { Main } from '../../Components/Main/Main';
 
 interface MainPageProps {
   title?: string;
 }
 
 const MainPage: FC<MainPageProps> = ({ title }) => {
-
-
   return (
     <div className="main-page">
       <p>first page works! {title}</p>
-      <FilesTable />
+      <Main />
     </div>
   );
 };
