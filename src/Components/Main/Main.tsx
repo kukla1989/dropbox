@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
 import { Dropbox } from 'dropbox';
-import FolderSVG from '../../icons/FolderSVG';
-import ImageSVG from '../../icons/ImageSVG';
-import FileSVG from '../../icons/FileSVG';
+import { FilesTable } from '../FilesTable/FilesTable';
+import { ModalUpload } from '../ModalUpload/ModalUpload';
+import DownArrowSVG from '../../icons/DownArrowSVG';
+import UploadSvg from '../../icons/UploadSvg';
 
-interface File {
+export interface FileType {
   '.tag': string;
   id: string;
   name: string;
@@ -13,9 +13,16 @@ interface File {
   path_lower: string;
   server_modified?: string;
 }
+
 export const Main = (): JSX.Element => {
-  const [files, setFiles] = useState<File[]>([]);
+  const [files, setFiles] = useState<FileType[]>([]);
   const [folderLinks, setFolderLinks] = useState<string[]>([]);
+  const [showModal, setShowModal] = useState(false);
+  const [uploaded, setUploaded] = useState<(string | undefined)[][]>([]);
+
+  const closeModal = () => {
+    setShowModal(false);
+  };
 
   const fetchAndSEtFiles = async (path = '') => {
     const fetchedFiles = await getFiles(path);
@@ -26,7 +33,7 @@ export const Main = (): JSX.Element => {
     fetchAndSEtFiles();
   }, []);
 
-  const handleFolderClick = (file: File) => {
+  const handleFolderClick = (file: FileType) => {
     if (file['.tag'] === 'folder') {
       fetchAndSEtFiles(file.path_lower);
       const newNameLink = file.path_lower.split('/').slice(-1)[0];
@@ -45,11 +52,59 @@ export const Main = (): JSX.Element => {
     setFolderLinks([]);
   };
 
-  console.log(this);
+  const deleteFile = async (path: string) => {
+    const accessToken = process.env.REACT_APP_ACCESS_TOKEN_DROPBOX;
+    const dbx = new Dropbox({ accessToken });
+
+    try {
+      await dbx.filesDeleteV2({
+        path,
+      });
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error(error);
+    }
+
+    const currentPath = folderLinks.length ? `/${folderLinks.join('/')}` : '';
+    fetchAndSEtFiles(currentPath);
+  };
+
+  const handleMainInput = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const accessToken = process.env.REACT_APP_ACCESS_TOKEN_DROPBOX;
+    const dbx = new Dropbox({ accessToken });
+    const file = event.target.files?.[0];
+    const pathNewFile = `${folderLinks.join('/')}/${file?.name}`;
+    dbx
+      .filesUpload({ path: pathNewFile, contents: file })
+      .then(() => {
+        setShowModal(true);
+        setUploaded((currentUploaded) => [
+          ...currentUploaded,
+          [file?.name, folderLinks.slice(-1)[0]],
+        ]);
+      })
+      // eslint-disable-next-line no-console
+      .catch((error) => console.error(error));
+  };
 
   return (
     <div className="main">
-      <h1>FileFolderTable</h1>
+      <input
+        type="file"
+        className="visually-hidden"
+        id="main__input-hidden"
+        onChange={handleMainInput}
+      />
+      <button
+        onClick={handleFileButtonClick}
+        type="button"
+        className="main__input"
+      >
+        <UploadSvg cssClass="main__upload-arrow" />
+        Upload
+        <DownArrowSVG cssClass="main__upload-arrow" />
+      </button>
+
       <div className="main__links">
         <button
           className="main__link"
@@ -70,43 +125,17 @@ export const Main = (): JSX.Element => {
           </button>
         ))}
       </div>
-
-      <table className="main__table">
-        <thead>
-          <tr>
-            <th className="main__cell">Name</th>
-            <th className="main__cell">Who can access</th>
-            <th className="main__cell">Modified</th>
-          </tr>
-        </thead>
-        <tbody>
-          {files.map((file) => (
-            <tr
-              className="main__row"
-              key={file.id}
-              onClick={() => handleFolderClick(file)}
-            >
-              <td className="main__cell">
-                <div className="main__cell-flex">
-                  {getIconByFileType(file)}
-                  <span className="main__cell-title">{file.name}</span>
-                </div>
-              </td>
-              <td className="main__cell">Only you</td>
-              <td className="main__cell">
-                {file.server_modified
-                  ? transformDateTime(file.server_modified)
-                  : '--'}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <FilesTable
+        files={files}
+        handleFolderClick={handleFolderClick}
+        deleteFile={deleteFile}
+      />
+      {showModal && <ModalUpload closeModal={closeModal} uploaded={uploaded} />}
     </div>
   );
 };
 
-async function getFiles(path = ''): Promise<File[]> {
+async function getFiles(path = ''): Promise<FileType[]> {
   const accessToken = process.env.REACT_APP_ACCESS_TOKEN_DROPBOX;
   const dbx = new Dropbox({ accessToken });
 
@@ -115,7 +144,7 @@ async function getFiles(path = ''): Promise<File[]> {
       path,
       include_media_info: true,
     });
-    return response.result.entries as File[];
+    return response.result.entries as FileType[];
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error(error);
@@ -123,41 +152,9 @@ async function getFiles(path = ''): Promise<File[]> {
   }
 }
 
-function transformDateTime(dateString: string) {
-  const dateObj = new Date(dateString);
-
-  const formattedDate = dateObj.toLocaleDateString('en-US', {
-    month: 'numeric',
-    day: 'numeric',
-    year: 'numeric',
-  });
-
-  const formattedTime = dateObj.toLocaleTimeString('en-US', {
-    hour: 'numeric',
-    minute: 'numeric',
-    hour12: true,
-  });
-
-  return `${formattedDate} ${formattedTime}`.toLowerCase();
-}
-
-function isFileImage(name: string) {
-  const fileType = name.slice(-3).toLowerCase();
-  return (
-    fileType === 'png' ||
-    fileType === 'jpg' ||
-    name.slice(-4).toLowerCase() === 'jpeg'
-  );
-}
-
-function getIconByFileType(file: File) {
-  if (file['.tag'] === 'folder') {
-    return <FolderSVG />;
+function handleFileButtonClick() {
+  const fileInput = document.getElementById('main__input-hidden');
+  if (fileInput) {
+    fileInput.click();
   }
-
-  if (isFileImage(file.name)) {
-    return <ImageSVG />;
-  }
-
-  return <FileSVG />;
 }

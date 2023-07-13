@@ -3,4 +3,11 @@ body {
   font-family: AtlasGrotesk, sans-serif;
 }
 
-@import './Components/Main/Main.scss'
+
+@import './variables.scss';
+
+@import './Components/Main/Main.scss';
+@import './Components/FilesTable/FilesTable.scss';
+@import './Components/ModalUpload/ModalUpload.scss';
+@import './Components/CopyLinkButton/CopyLinkButton.scss';
+@import './Components/OperateFile/OperateFile.scss';

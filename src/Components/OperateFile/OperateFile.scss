@@ -1,0 +1,46 @@
+.operate-file {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+
+  &__share {
+    min-width: 30px;
+  }
+
+  &__three-dots {
+    min-width: 30px;
+  }
+
+  &__modal {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 100px;
+    border: none;
+    outline: 'none';
+
+    &-btn {
+      width: 100px;
+      background-color: #fff;
+      border: none;
+      transition: background-color $transitionTime;
+
+      &:hover {
+        background-color: $cGrayDark;
+      }
+    }
+  }
+
+  &__svg {
+    height: 40px;
+
+    &:hover {
+      background-color: $cGrayDarkest;
+    }
+  }
+
+  &__tmp {
+    position: relative;
+  }
+}

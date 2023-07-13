@@ -1,14 +1,9 @@
 import React, { FC } from 'react';
 import { Main } from '../../Components/Main/Main';
 
-interface MainPageProps {
-  title?: string;
-}
-
-const MainPage: FC<MainPageProps> = ({ title }) => {
+const MainPage: FC = () => {
   return (
     <div className="main-page">
-      <p>first page works! {title}</p>
       <Main />
     </div>
   );

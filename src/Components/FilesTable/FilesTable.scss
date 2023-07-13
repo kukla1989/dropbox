@@ -1,0 +1,43 @@
+.files-table {
+  &__table {
+    border-collapse: collapse;
+
+    @media (min-width: 1200px) {
+      min-width: 1000px;
+    }
+  }
+
+  &__row {
+    height: 59px;
+    border-color: #F7F5F1;
+    padding: 0 20px;
+    border-bottom: 1px solid #a6917133;
+
+    &:hover td {
+      background-color: #F7F5F1;
+      border-collapse: collapse;
+    }
+  }
+
+  &__cell {
+    text-align: left;
+  }
+
+  &__cell--access {
+    width: 100px;
+  }
+
+  &__cell--modified {
+    width: 200px;
+  }
+
+  &__cell-flex {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+}
+
+.imageSVG {
+  width: 33px;
+}

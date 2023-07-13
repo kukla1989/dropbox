@@ -1,7 +1,7 @@
 import React from 'react';
 
 const ImageSVG = (): JSX.Element => (
-  <svg className="svg" viewBox="0 0 20 16">
+  <svg className="imageSVG" viewBox="0 0 20 16">
     <g>
       <title>background</title>
       <rect
