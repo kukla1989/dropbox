@@ -19,6 +19,7 @@ export const Main = (): JSX.Element => {
   const [folderLinks, setFolderLinks] = useState<string[]>([]);
   const [showModal, setShowModal] = useState(false);
   const [uploaded, setUploaded] = useState<(string | undefined)[][]>([]);
+  const [sortByName, setSortByName] = useState(false);
 
   const closeModal = () => {
     setShowModal(false);
@@ -52,6 +53,11 @@ export const Main = (): JSX.Element => {
     setFolderLinks([]);
   };
 
+  const reloadFiles = () => {
+    const currentPath = folderLinks.length ? `/${folderLinks.join('/')}` : '';
+    fetchAndSEtFiles(currentPath);
+  };
+
   const deleteFile = async (path: string) => {
     const accessToken = process.env.REACT_APP_ACCESS_TOKEN_DROPBOX;
     const dbx = new Dropbox({ accessToken });
@@ -65,8 +71,7 @@ export const Main = (): JSX.Element => {
       console.error(error);
     }
 
-    const currentPath = folderLinks.length ? `/${folderLinks.join('/')}` : '';
-    fetchAndSEtFiles(currentPath);
+    reloadFiles();
   };
 
   const handleMainInput = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -82,10 +87,23 @@ export const Main = (): JSX.Element => {
           ...currentUploaded,
           [file?.name, folderLinks.slice(-1)[0]],
         ]);
+        reloadFiles();
       })
       // eslint-disable-next-line no-console
       .catch((error) => console.error(error));
   };
+
+  const handleSortByName = () => {
+    setSortByName((currentSort) => !currentSort);
+  };
+
+  files.sort((fileA, fileB) => {
+    if (sortByName) {
+      return fileA.name.localeCompare(fileB.name);
+    }
+
+    return fileB.name.localeCompare(fileA.name);
+  });
 
   return (
     <div className="main">
@@ -129,6 +147,8 @@ export const Main = (): JSX.Element => {
         files={files}
         handleFolderClick={handleFolderClick}
         deleteFile={deleteFile}
+        handleSortByName={handleSortByName}
+        sortByName={sortByName}
       />
       {showModal && <ModalUpload closeModal={closeModal} uploaded={uploaded} />}
     </div>

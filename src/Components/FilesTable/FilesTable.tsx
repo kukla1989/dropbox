@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faArrowDown, faArrowUp } from '@fortawesome/free-solid-svg-icons';
 import { FileType } from '../Main/Main';
 import FolderSVG from '../../icons/FolderSVG';
 import ImageSVG from '../../icons/ImageSVG';
@@ -9,12 +11,16 @@ interface Props {
   handleFolderClick: (file: FileType) => void;
   files: FileType[];
   deleteFile: (path: string) => void;
+  handleSortByName: () => void;
+  sortByName: boolean;
 }
 
 export const FilesTable: React.FC<Props> = ({
   handleFolderClick,
   files,
   deleteFile,
+  handleSortByName,
+  sortByName,
 }) => {
   const [hoveredRowID, setHoveredRowIndex] = useState<string | null>(null);
 
@@ -30,7 +36,17 @@ export const FilesTable: React.FC<Props> = ({
     <table className="files-table__table">
       <thead>
         <tr>
-          <th className="files-table__cell">Name</th>
+          <th
+            className="files-table__cell files-table__head-name"
+            onClick={handleSortByName}
+          >
+            Name{` `}
+            {sortByName ? (
+              <FontAwesomeIcon icon={faArrowDown} />
+            ) : (
+              <FontAwesomeIcon icon={faArrowUp} />
+            )}
+          </th>
           <th className="files-table__cell">Who can access</th>
           <th className="files-table__cell">Modified</th>
         </tr>
@@ -50,7 +66,9 @@ export const FilesTable: React.FC<Props> = ({
                 <span className="files-table__cell-title">{file.name}</span>
               </div>
             </td>
-            <td className="files-table__cell files-table__cell--access">Only you</td>
+            <td className="files-table__cell files-table__cell--access">
+              Only you
+            </td>
             <td className="files-table__cell files-table__cell--modified ">
               <OperateFile
                 file={file}

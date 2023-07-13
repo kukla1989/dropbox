@@ -31,10 +31,18 @@
     width: 200px;
   }
 
+  &__cell-title {
+    min-width: 230px;
+  }
+
   &__cell-flex {
     display: flex;
     align-items: center;
     gap: 5px;
+  }
+
+  &__head-name {
+    cursor: pointer;
   }
 }
 

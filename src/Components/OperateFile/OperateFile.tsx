@@ -1,5 +1,6 @@
 /* eslint-disable no-nested-ternary */
 import React, { useState } from 'react';
+import { Dropbox } from 'dropbox';
 import { FileType } from '../Main/Main';
 import { CopyLinkButton } from '../CopyLinkButton/CopyLinkButton';
 import ShareSVG from '../../icons/ShareSVG';
@@ -46,7 +47,11 @@ const OperateFile: React.FC<Props> = ({ file, deleteFile, isHovered }) => {
                 <DeleteSVG cssClass="operate-file__delete-svg" />
                 delete
               </button>
-              <button className="operate-file__modal-btn" type="button">
+              <button
+                className="operate-file__modal-btn"
+                type="button"
+                onClick={() => download(file.path_lower)}
+              >
                 <DownloadSVG cssClass="operate-file__download-svg" />
                 download
               </button>
@@ -79,5 +84,22 @@ function transformDateTime(dateString: string) {
 
   return `${formattedDate} ${formattedTime}`.toLowerCase();
 }
+
+const download = async (path: string) => {
+  const accessToken = process.env.REACT_APP_ACCESS_TOKEN_DROPBOX;
+  const dbx = new Dropbox({ accessToken });
+
+  // filesDownloadZip
+  try {
+    const respons = await dbx.filesDownload({
+      path,
+    });
+    // eslint-disable-next-line no-console
+    console.log(respons, 'respons');
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error(error);
+  }
+};
 
 export default OperateFile;
