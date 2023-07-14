@@ -1,6 +1,7 @@
 /* eslint-disable no-nested-ternary */
 import React, { useState } from 'react';
-import { Dropbox } from 'dropbox';
+import { Dropbox, files } from 'dropbox';
+import { saveAs } from 'file-saver';
 import { FileType } from '../Main/Main';
 import { CopyLinkButton } from '../CopyLinkButton/CopyLinkButton';
 import ShareSVG from '../../icons/ShareSVG';
@@ -89,13 +90,17 @@ const download = async (path: string) => {
   const accessToken = process.env.REACT_APP_ACCESS_TOKEN_DROPBOX;
   const dbx = new Dropbox({ accessToken });
 
-  // filesDownloadZip
   try {
-    const respons = await dbx.filesDownload({
+    const res = await dbx.filesDownload({
       path,
     });
-    // eslint-disable-next-line no-console
-    console.log(respons, 'respons');
+    interface FileMetadataWithBinary extends files.FileMetadata {
+      fileBlob: Blob;
+    }
+
+    const result = res.result as FileMetadataWithBinary;
+    const { fileBlob } = result;
+    saveAs(fileBlob, res.result.name);
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error(error);

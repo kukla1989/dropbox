@@ -78,7 +78,9 @@ export const Main = (): JSX.Element => {
     const accessToken = process.env.REACT_APP_ACCESS_TOKEN_DROPBOX;
     const dbx = new Dropbox({ accessToken });
     const file = event.target.files?.[0];
-    const pathNewFile = `${folderLinks.join('/')}/${file?.name}`;
+    const pathNewFile = folderLinks.length
+      ? `/${folderLinks.join('/')}/${file?.name}`
+      : `/${file?.name}`;
     dbx
       .filesUpload({ path: pathNewFile, contents: file })
       .then(() => {
@@ -99,10 +101,10 @@ export const Main = (): JSX.Element => {
 
   files.sort((fileA, fileB) => {
     if (sortByName) {
-      return fileA.name.localeCompare(fileB.name);
+      return fileB.name.localeCompare(fileA.name);
     }
 
-    return fileB.name.localeCompare(fileA.name);
+    return fileA.name.localeCompare(fileB.name);
   });
 
   return (

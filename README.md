@@ -1,7 +1,3 @@
-## Deployment
-
-This project deployed on GitHub Pages for easy access and sharing. You can access the deployed page at [GitHub Page](https://kukla1989.github.io/dropbox).
-
 ##Usage
 
 ```sh
@@ -22,7 +18,7 @@ npm start
 
 # Dropbox Replica
 
-This project is a replica of the Dropbox  created for test task in DBB Software. It is intended to showcase web development skills, specifically using Sass, BEM methodology, and TypeScript. The replica deployed on GitHub Pages for easy access and sharing.
+This project is a replica of the Dropbox  with basic action with files - show, delete, download, upload to dropbox server. 
 
 
 ## Technologies Used
@@ -34,4 +30,3 @@ This project is a replica of the Dropbox  created for test task in DBB Software.
 - React
 - HTML5
 - CSS3 (Sass)
-

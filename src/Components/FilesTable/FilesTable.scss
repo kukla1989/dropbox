@@ -10,17 +10,17 @@
   &__row {
     height: 59px;
     border-color: #F7F5F1;
-    padding: 0 20px;
     border-bottom: 1px solid #a6917133;
 
     &:hover td {
       background-color: #F7F5F1;
-      border-collapse: collapse;
     }
   }
 
   &__cell {
     text-align: left;
+
+    vertical-align: middle;
   }
 
   &__cell--access {
@@ -44,8 +44,14 @@
   &__head-name {
     cursor: pointer;
   }
+
+  &__table {
+    border-spacing: 0;
+  }
 }
 
 .imageSVG {
   width: 33px;
 }
+
+

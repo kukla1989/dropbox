@@ -41,7 +41,7 @@ export const ModalUpload: React.FC<Props> = ({ closeModal, uploaded }) => {
                   <span className="modal__uploaded-to">
                     Uploaded to{' '}
                     <span className="modal__uploaded-to-link">
-                      {upload[1]?.slice(1) || 'Files'}
+                      {upload[1] || 'Files'}
                     </span>
                   </span>
                 </div>
